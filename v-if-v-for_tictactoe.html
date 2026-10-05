@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Document</title>
+</head>
+
+<body
+    class="bg-[url(https://i.pinimg.com/originals/b7/60/a7/b760a77043a28e8288d82e508bf893b2.gif)] bg-no-repeat bg-center bg-cover">
+    <div id="app">
+        <div class="flex flex-col justify-center items-center h-screen">
+            <div class="grid grid-cols-3 p-5 bg-stone-600 rounded-lg mt-10">
+                <div v-for="(row, rowIndex) in boardCells" :key="rowIndex">
+                    <div v-for="(cell, colIndex) in row" :key="colIndex" class="w-15 h-15 m-4 bg-gray-200 rounded-2xl"
+                        @click="cellClicked(rowIndex,colIndex)" :class="{'text-red-500 text-2xl text-center pt-4 font-bold': cell === 'X',
+                                 'text-blue-500 text-2xl text-center pt-4 font-bold': cell === 'O', 'cursor-not-allowed': cell !== '' || winner}">
+
+                        {{cell}}
+                    </div>
+                </div>
+            </div>
+            <p class="text-white text-4xl ">
+                {{message}}
+            </p>
+            <div class="flex justify-center">
+                <button @click="restartGame()"
+                    class="bg-blue-500 hover:bg-blue-700 py-2 px-5 m-5 rounded-lg text-white font-bold text-2xl ">Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        Vue.createApp({
+            data() {
+                return {
+                    boardCells: [
+                        ["", "", ""],
+                        ["", "", ""],
+                        ["", "", ""]
+                    ],
+
+                    message: "Player X's turn",
+                    currentPlayer: 'X',
+                    winner: null
+
+
+                }
+            },
+
+            methods: {
+
+                cellClicked(row, col) {
+                    if (this.boardCells[row][col] !== "" || this.winner) {
+                       return;
+                    }
+                    this.boardCells[row][col] = this.currentPlayer;
+
+
+                    if (this.isWinner(this.currentPlayer)) {
+                        this.winner = this.currentPlayer;
+                        this.message = `Player ${this.winner} wins!`;
+                        // }else {
+                        //     if (this.currentPlayer === 'X') {
+                        //         this.currentPlayer = 'O';
+                        //         this.message = "Player O's turn"
+                    } else {
+                        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+                        this.message = `Player ${this.currentPlayer}'s Turn`;
+                    }
+                },
+
+
+                isWinner(user) {
+
+                    for (let row = 0; row < this.boardCells.length; row++) {
+                        if (this.boardCells[row][0] == user
+                            && this.boardCells[row][1] == user
+                            && this.boardCells[row][2] == user) {
+                            return true;
+                        }
+                    }
+
+                    for (let col = 0; col < this.boardCells.length; col++) {
+                        if (this.boardCells[0][col] === user &&
+                            this.boardCells[1][col] === user &&
+                            this.boardCells[2][col] === user) {
+                            return true;
+                        }
+                    }
+                    //   para diagonal  //
+                    if (this.boardCells[0][0] == user
+                        && this.boardCells[1][1] == user
+                        && this.boardCells[2][2] == user) {
+                        return true;
+                    }
+                    if (this.boardCells[0][2] == user
+                        && this.boardCells[1][1] == user
+                        && this.boardCells[2][0] == user) {
+                        return true;
+                    }
+                    return false;
+
+
+                },
+                
+                restartGame() {
+                    this.boardCells = [
+                        ["", "", ""],
+                        ["", "", ""],
+                        ["", "", ""]
+                        
+                    ];
+                    this.message = "player X's turn";
+                    this.currentPlayer = 'X';
+                    this.winner = null;
+                    
+                },
+            }
+
+        }).mount('#app')
+
+    </script>
+
+</body>
+
+</html>
